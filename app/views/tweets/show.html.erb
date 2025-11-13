@@ -1,0 +1,73 @@
+<h1>群馬の観光地</h1>
+<h3>豆知識</h3>
+<div class="tweet">
+   <%= link_to @tweet.user.name, user_path(@tweet.user.id) %>
+   <p><%= @tweet.place_name %></p>
+   <% if @tweet.category.present? %>
+      <%= link_to @tweet.category.name, category_path(@tweet.category), class: "category-link" %>
+   <% end %>
+
+   <p><%= @tweet.knowledge %></p>
+   <p><%= @tweet.created_at %></p>
+
+   <% if user_signed_in? %>
+      <% if current_user.already_liked?(@tweet) %>
+        <%= button_to tweet_like_path(@tweet), method: :delete do %>
+      
+        <i class="fas fa-heart"></i><%= @tweet.likes.count %>
+        <% end %>
+      <% else %>
+        <%= button_to tweet_likes_path(@tweet), method: :post do %>
+           <i class="far fa-heart"></i><%= @tweet.likes.count %>
+        <% end %>
+      <% end %>
+    <% else %>
+       <i class="far fa-heart"></i><%= @tweet.likes.count %>
+    <% end %>
+</div>
+
+<div class="tags">
+  <% @tweet.tags.each do |tag| %>
+    <%= link_to "##{tag.name}", tag_path(tag), class: "tag-link" %>
+  <% end %>
+</div>
+
+
+<% if user_signed_in? && current_user.id == @tweet.user_id %>
+  <%= link_to "編集する", edit_tweet_path(@tweet) %>
+  <%= button_to "削除する", tweet_path(@tweet), method: :delete %>
+<% end %> 
+
+<div class="comment-wrapper">
+  <p>コメント一覧</p>
+  <% @comments.each do |c| %>
+    <div>
+      <%= c.user.email unless c.user.blank? %>
+      <%= link_to c.user.name, user_path(c.user.id) %>
+      <br>
+      <%= c.content %>
+      <br>
+      <% if c.user == current_user %>
+      <%= link_to "編集する", edit_tweet_comment_path(@tweet, c) %>
+      <%= button_to "削除する", tweet_comment_path(@tweet, c), method: :delete, data: { confirm: "本当に削除しますか？" } %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if user_signed_in? %>
+    <%= form_with(model: [@tweet, @comment], local: true) do |f| %>
+      <%= f.text_area :content %>
+      <%= button_tag type: "submit" do %>
+        <i class="far fa-comments"></i> コメントする
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
+
+<h2>いいねしたユーザー</h2>
+<% @tweet.liked_users.each do |user| %>
+  <%= user.email %>
+  <%= link_to user.name, user_path(user.id) %>
+<% end %>
+
+<p><%= link_to "観光地一覧に戻る", tweets_path %></p>

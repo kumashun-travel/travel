@@ -1,0 +1,6 @@
+<h3>コメントを編集する</h3>
+
+<%= form_for [@tweet, @comment] do |f| %>
+  <%= f.text_area :content %>
+  <%= f.submit "更新する" %>
+<% end %>

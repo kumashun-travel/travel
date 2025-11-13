@@ -1,0 +1,79 @@
+<h2><%= @category.name %> の投稿一覧</h2>
+
+<%= form_with url: category_path(@category), method: :get, local: true do %>
+  <div style="margin-bottom: 10px;">
+    <%= label_tag :search, "キーワード検索（地名・観光地名など）" %><br>
+    <%= text_field_tag :search, params[:search], placeholder: "例：京都、温泉", size: 30 %>
+  </div>
+
+  <div style="margin-bottom: 10px;">
+    <%= label_tag :tag_search, "タグ検索（複数可・スペース区切り）" %><br>
+    <%= text_field_tag :tag_search, params[:tag_search], placeholder: "例：アート 家族 癒し", size: 30 %>
+  </div>
+
+  <%= submit_tag "検索", class: "btn btn-primary" %>
+<% end %>
+
+<% if @tweets.any? %>
+  <% @tweets.each do |t| %>
+
+    
+    <div class="tweet">
+     <%= link_to t.user.name, user_path(t.user.id) %>
+
+
+     <% if t.image.attached? %>
+        <%= image_tag t.image, size: '150x100'%>
+     <% end %>
+      <%= t.place_name %>
+
+      <%= t.price %>
+
+      <%= t.child_price %>
+
+      <%= t.location %>
+
+      <%= t.parking %>
+
+      <% if t.tags.present? %>
+       
+        <% t.tags.each do |tag| %>
+          <%= link_to "##{tag.name}", tag_path(tag), class: "tag-link" %>
+        <% end %>
+      
+      <% end %>
+
+      <% if t.present? %>
+        <%= link_to "豆知識へ", tweet_path(t), class: "btn" %>
+      <% else %>
+        <span>投稿が存在しません</span>
+      <% end %>
+
+    </div>
+
+    
+    <% if user_signed_in? %>
+      <% if current_user.already_liked?(t) %>
+          <%= button_to tweet_like_path(id: t.id, tweet_id: t.id), method: :delete do %>
+              <i class="fas fa-heart"></i><%= t.likes.count %>
+          <% end %>
+      <% else %>
+          <%= button_to tweet_likes_path(id: t.id, tweet_id: t.id), method: :post do %>
+              <i class="fas fa-heart"></i><%= t.likes.count %>
+          <% end %>
+      <% end %>
+    <% else %>
+      <i class="fas fa-heart"></i><%= t.likes.count %>
+    <% end %>
+
+    <% if user_signed_in? && current_user.id == t.user_id %>
+      <%= link_to "編集する", edit_tweet_path(t.id) %>
+      <%= button_to "削除する", tweet_path(t.id), method: :delete %>
+    <% end %> 
+  <% end %>
+<% else %>
+  <p>該当する投稿はありません。</p>
+<% end %>
+
+
+<%= link_to "観光地一覧に戻る", tweets_path %>

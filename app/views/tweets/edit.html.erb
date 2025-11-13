@@ -1,0 +1,54 @@
+<%= form_with model: @tweet, local: true do |f| %>
+
+ <div class="field">
+    <%= f.label :place_name, "観光地の名称" %>
+    <%= f.text_field :place_name, size: 30 %>
+  </div>
+
+ <div class="field">
+    <%= f.label :price, "料金" %>
+    <%= f.select :price,["無料", "~1000円", "1001~2000円","2001~3000円","3001~4000円","4001~5000円","5001~10000円","10000円~",], prompt: "選択してください" %>
+  </div>
+
+  <div class="field">
+    <%= f.label :location, "場所" %>
+    <%= f.select :location,["高崎市", "前橋市", "桐生市","伊勢崎市","太田市","沼田市","館林市","渋川市","藤岡市","富岡市","安中市","みどり市","吉岡町","神流町","下仁田町","甘楽町","中之条町","長野原町","草津町","東吾妻町","片品町","みなかみ町","玉村町","板倉町","明和町","千代田町","大泉町","邑楽町","榛東村","上野村","南牧村","嬬恋村","高山村","川場村","昭和村"], prompt: "選択してください" %>
+  </div>
+
+  <div class="field">
+    <%= f.label :child_price, "学割等の有無" %>
+    <%= f.select :child_price, ["乳幼児以下有","小学生以下有","中学生以下有","高校生以下有","学生有","なし"], prompt: "選択してください" %>
+  </div>
+
+  <div class="field">
+    <%= f.label :parking, "駐車場" %>
+    <%= f.select :parking, ["あり","あり(有料)", "なし"], prompt: "選択してください" %>
+  </div>
+
+  <div class="field">
+    <%= f.label :knowledge, "豆知識" %>
+    <%= f.text_area :knowledge, size: 140 %>
+  </div>
+
+  <h3>既存のタグを編集 / 削除</h3>
+  
+  <div class="existing-tags">
+    <% @tweet.tags.each do |tag| %>
+      <div class="form-group">
+        <!-- チェックを外すと削除 -->
+        <%= check_box_tag "tweet[tag_ids][]", tag.id, true, id: "tag_#{tag.id}" %>
+        <%= label_tag "tag_#{tag.id}", tag.name %>
+        <!-- 名前の編集 -->
+        <%= text_field_tag "edit_tags[#{tag.id}]", tag.name, class: "form-control", placeholder: "タグ名を編集" %>
+      </div>
+    <% end %>
+  </div>
+
+  <h3>新しいタグを追加</h3>
+  <div class="form-group">
+    <%= label_tag :new_tags, "新しいタグ（全角スペース・全角カンマ区切り）" %>
+    <%= text_field_tag "tweet[new_tags]", nil, class: "form-control", placeholder: "例）城、アート、アクティビティ" %>
+  </div>
+
+  <%= f.submit "編集する" %>
+<% end %>

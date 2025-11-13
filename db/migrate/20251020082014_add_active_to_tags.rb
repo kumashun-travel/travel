@@ -1,0 +1,5 @@
+class AddActiveToTags < ActiveRecord::Migration[8.0]
+  def change
+    add_column :tags, :active, :boolean, default: false
+  end
+end

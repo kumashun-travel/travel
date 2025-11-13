@@ -1,0 +1,5 @@
+class AddChildPriceToTweets < ActiveRecord::Migration[8.0]
+  def change
+    add_column :tweets, :child_price, :string
+  end
+end

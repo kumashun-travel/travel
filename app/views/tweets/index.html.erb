@@ -1,0 +1,115 @@
+<h2>観光地を見つける</h2>
+<h3>一覧ページ</h3>
+
+<% if user_signed_in? %>
+  <%= link_to "マイページへ", user_path(current_user.id) %>
+<% end %>
+
+<ul>
+<%= link_to "新規投稿へ", new_tweet_path %>
+</ul>
+
+<h3>投稿を検索</h3>
+ <%= form_tag({controller:"tweets",action:"index"}, method: :get) do %>
+   <%= text_field_tag :search %>
+   <%= submit_tag '検索する'  %>
+<% end %>
+
+<%= form_tag tweets_path, method: :get do %>
+  <div>
+    <%= label_tag :tag_search, "タグで検索" %>
+    <%= text_field_tag :tag_search, params[:tag_search], placeholder: "例）城、温泉、絶景" %>
+    <%= submit_tag "検索" %>
+  </div>
+<% end %>
+
+<h3>カテゴリで探す</h3>
+<ul>
+  <% Category.all.each do |category| %>
+    <li><%= link_to category.name, category_path(category) %></li>
+  <% end %>
+</ul>
+
+
+<h3>人気のタグ TOP5 🏷️</h3>
+<ul>
+  <% @popular_tags.each do |tag| %>
+    <li>
+      <%= link_to tag.name, tag_path(tag) %>
+      （<%= tag.tweets.count %> 件）
+    </li>
+  <% end %>
+</ul>
+
+<% if @random_knowledge_tweet.present? %>
+   <h3>今日の豆知識</h3>
+    <p>
+      <strong><%= @random_knowledge_tweet.place_name %></strong> に関する豆知識：<br>
+      <%= @random_knowledge_tweet.knowledge %>
+    </p>
+<% end %>
+
+<div class="tweets-container">
+  <% @tweets.each do |t| %>
+
+    
+    <div class="tweet">
+     <%= link_to t.user.name, user_path(t.user.id) %>
+     <%= t.user.email %>
+
+     <% if t.category.present? %>
+      <%= link_to t.category.name, category_path(t.category), class: "category-link" %>
+     <% end %>
+
+     <% if t.image.attached? %>
+        <%= image_tag t.image, size: '150x100'%>
+     <% end %>
+      <%= t.place_name %>
+
+      <%= t.price %>
+
+      <%= t.child_price %>
+
+      <%= t.location %>
+
+      <%= t.parking %>
+
+      <% if t.tags.present? %>
+       
+        <% t.tags.each do |tag| %>
+          <span><%= "\##{tag.name}" %></span>
+        <% end %>
+      
+      <% end %>
+
+      <% if t.present? %>
+        <%= link_to "豆知識へ", tweet_path(t), class: "btn" %>
+      <% else %>
+        <span>投稿が存在しません</span>
+      <% end %>
+
+    </div>
+
+    
+    <% if user_signed_in? %>
+      <% if current_user.already_liked?(t) %>
+          <%= button_to tweet_like_path(id: t.id, tweet_id: t.id), method: :delete do %>
+              <i class="fas fa-heart"></i><%= t.likes.count %>
+          <% end %>
+      <% else %>
+          <%= button_to tweet_likes_path(id: t.id, tweet_id: t.id), method: :post do %>
+              <i class="fas fa-heart"></i><%= t.likes.count %>
+          <% end %>
+      <% end %>
+    <% else %>
+      <i class="fas fa-heart"></i><%= t.likes.count %>
+    <% end %>
+
+    <% if user_signed_in? && current_user.id == t.user_id %>
+      <%= link_to "編集する", edit_tweet_path(t.id) %>
+      <%= button_to "削除する", tweet_path(t.id), method: :delete %>
+    <% end %> 
+  <% end %>
+
+  
+</div>

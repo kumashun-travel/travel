@@ -1,0 +1,68 @@
+<h1>観光地</h1>
+<h3>新規投稿ページ</h3>
+<%= form_for @tweet do |f| %>
+
+<div class="field">
+    <%= f.label :観光地の名称%>
+    <%= f.text_field :place_name, :size => 30 %>
+</div>
+
+<div class="field">
+  <%= f.label :category_id, "カテゴリ" %>
+  <%= f.collection_select :category_id, Category.all, :id, :name, prompt: "選択してください" %>
+</div>
+
+<div class="field">
+    <%= f.label :料金目安 %>
+    <%= f.select :price,["無料", "~1000円", "1001~2000円","2001~3000円","3001~4000円","4001~5000円","5000~10000円","10000円~",], prompt: "選択してください" %>
+</div>
+
+<div class="field">
+ <%= f.label :child_price, "学割等の有無" %>
+ <%= f.select :child_price, ["乳幼児以下有","小学生以下有","中学生以下有","高校生以下有","学生有","なし"], prompt: "選択してください" %>
+</div>
+
+<div class="field">
+    <%= f.label :ロケーション %>
+    <%= f.select :location, ["高崎市", "前橋市", "桐生市","伊勢崎市","太田市","沼田市","館林市","渋川市","藤岡市","富岡市","安中市","みどり市","吉岡町","神流町","下仁田町","甘楽町","中之条町","長野原町","草津町","東吾妻町","片品町","みなかみ町","玉村町","板倉町","明和町","千代田町","大泉町","邑楽町","榛東村","上野村","南牧村","嬬恋村","高山村","川場村","昭和村"], prompt: "選択してください" %>
+</div>
+
+<div class="field">
+ <%= f.label :parking, "駐車場" %>
+ <%= f.select :parking, ["あり", "なし", "近隣にあり"], prompt: "選択してください" %>
+</div>
+
+<div class="field">
+    <%= f.label :豆知識  %>
+    <%= f.text_area :knowledge, :size => "30x2" %>
+</div>
+
+<div class="field">
+    <%= f.label :image %>
+    <%= f.file_field :image %>
+</div>
+
+<div class='form-group'>
+<%= f.label :よく使うタグ %>
+        <%= f.collection_check_boxes(:tag_ids, Tag.where(fixed: true), :id, :name) do |tag| %>
+            <div class='form-check'>
+                <%= tag.label class: 'form-check-label' do %>
+                    <%= tag.check_box class: 'form-check-input' %>
+                    <%= tag.text %>
+                <% end %>
+            </div>
+        <% end %>
+</div>
+
+<div class='form-group mt-3'>
+    <label>新しいタグを追加（全角スペースまたは「、」区切り）</label>
+    <%= text_field_tag 'tweet[new_tags]', nil, placeholder: "例）城、アート、アクティビティ", class: "form-control" %>
+</div>
+
+
+<%= f.submit "観光地を投稿する" %>
+<% end %>
+
+
+
+<%= link_to "観光地一覧に戻る", tweets_path %>
