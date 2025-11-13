@@ -18,3 +18,8 @@ production:
   adapter: postgresql # 追加
   encoding: unicode # 追加
   url: <%= ENV["DATABASE_URL"] %> # 追加
+
+cable:
+  <<: *default
+  adapter: postgresql
+  url: <%= ENV["DATABASE_URL"] %>
